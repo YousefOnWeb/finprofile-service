@@ -17,7 +17,7 @@ No database installation is required — the project uses an embedded H2 databas
 
 ## Quick start
 
-All commands below are run **from the project root** (`Z:\Projects\finprofile-service` or wherever you cloned this repository).
+All commands below are run **from the project root**.
 
 ### 1. Build the project
 
