@@ -23,3 +23,9 @@
 - Updated service for new 5-arg entity constructor and JPA-generated IDs.
 - mvn verify: 25 tests run (7 controller + 8 repository + 10 service), 0 failures, BUILD SUCCESS.
 
+## 2026-11-22 — Complete: Add README.md (documentation)
+- Created streamlined README.md with prerequisites, exact commands (from project root), API endpoints, project structure, concepts demonstrated, and deliberately excluded items.
+- README verified against code: endpoints, test count (25), and package structure all match.
+- Original milestone scope complete: Spring IoC, layered architecture, DTO boundaries, Bean Validation, Spring Web MVC/REST, @ControllerAdvice, JPA persistence, and testing.
+
+
