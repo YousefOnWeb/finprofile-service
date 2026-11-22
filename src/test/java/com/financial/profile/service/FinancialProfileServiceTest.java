@@ -52,13 +52,15 @@ class FinancialProfileServiceTest {
         MockitoAnnotations.openMocks(this);
 
         existingProfile = new FinancialProfile(
-                "prof-123",
                 "Jane Doe",
                 "jane@example.com",
                 new BigDecimal("5000.00"),
                 new BigDecimal("20000.00"),
                 RiskTolerance.MODERATE
         );
+        existingProfile.setId("prof-123");
+        existingProfile.setCreatedAt(Instant.parse("2026-01-01T00:00:00Z"));
+        existingProfile.setUpdatedAt(Instant.parse("2026-01-01T00:00:00Z"));
     }
 
     @Test
@@ -75,13 +77,13 @@ class FinancialProfileServiceTest {
         when(repository.existsByEmail("john@example.com")).thenReturn(false);
 
         FinancialProfile saved = new FinancialProfile(
-                "prof-456",
                 "John Smith",
                 "john@example.com",
                 new BigDecimal("6000.00"),
                 new BigDecimal("30000.00"),
                 RiskTolerance.CONSERVATIVE
         );
+        saved.setId("prof-456");
         saved.setCreatedAt(Instant.parse("2026-01-01T00:00:00Z"));
         saved.setUpdatedAt(Instant.parse("2026-01-01T00:00:00Z"));
         when(repository.save(any(FinancialProfile.class))).thenReturn(saved);
@@ -159,13 +161,13 @@ class FinancialProfileServiceTest {
                 RiskTolerance.AGGRESSIVE
         );
         FinancialProfile updated = new FinancialProfile(
-                "prof-123",
                 "Jane Smith",
                 "jane@example.com",
                 new BigDecimal("5500.00"),
                 new BigDecimal("25000.00"),
                 RiskTolerance.AGGRESSIVE
         );
+        updated.setId("prof-123");
         updated.setCreatedAt(existingProfile.getCreatedAt());
         updated.setUpdatedAt(Instant.parse("2026-02-01T00:00:00Z"));
         when(repository.save(any(FinancialProfile.class))).thenReturn(updated);
@@ -225,8 +227,8 @@ class FinancialProfileServiceTest {
     @DisplayName("delete should remove an existing profile")
     void delete_existing_removes() {
         // Given: the cabinet contains the profile
-        when(repository.findById("prof-123")).thenReturn(Optional.of(existingProfile));
-        when(repository.deleteById("prof-123")).thenReturn(true);
+        when(repository.existsById("prof-123")).thenReturn(true);
+        doNothing().when(repository).deleteById("prof-123");
 
         // When: we delete the profile
         service.delete("prof-123");
@@ -239,7 +241,7 @@ class FinancialProfileServiceTest {
     @DisplayName("delete should throw ResourceNotFoundException when profile does not exist")
     void delete_notFound_throws() {
         // Given: the cabinet has no profile with this ID
-        when(repository.findById("prof-missing")).thenReturn(Optional.empty());
+        when(repository.existsById("prof-missing")).thenReturn(false);
 
         // When / Then: the manager throws not-found
         assertThatThrownBy(() -> service.delete("prof-missing"))
@@ -251,13 +253,13 @@ class FinancialProfileServiceTest {
     void listAll_returnsAllProfiles() {
         // Given: the cabinet contains multiple profiles
         FinancialProfile second = new FinancialProfile(
-                "prof-456",
                 "Bob Smith",
                 "bob@example.com",
                 new BigDecimal("7000.00"),
                 new BigDecimal("40000.00"),
                 RiskTolerance.AGGRESSIVE
         );
+        second.setId("prof-456");
         when(repository.findAll()).thenReturn(List.of(existingProfile, second));
 
         // When: we list all profiles

@@ -4,42 +4,82 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+
 /**
  * The domain entity representing a financial user profile.
  *
- * <p>This is the internal "permanent record" stored by the repository. It is
- * intentionally separate from the DTOs so that the database model never leaks
- * into the public API.</p>
+ * <p>This is a JPA entity mapped to a database table. Spring Data JPA
+ * handles persistence automatically through the repository.</p>
+ *
+ * <p>Analogy: this is the blueprint for a row in the database table. Each
+ * field maps to a column, and each instance represents one stored profile.</p>
  */
+@Entity
+@Table(name = "financial_profiles")
 public class FinancialProfile {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false)
     private String fullName;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal monthlyIncome;
+
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal netWorth;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RiskTolerance riskTolerance;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    public FinancialProfile() {
+    protected FinancialProfile() {
+        // JPA requires a no-arg constructor
     }
 
-    public FinancialProfile(String id,
-                            String fullName,
+    public FinancialProfile(String fullName,
                             String email,
                             BigDecimal monthlyIncome,
                             BigDecimal netWorth,
                             RiskTolerance riskTolerance) {
-        this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.monthlyIncome = monthlyIncome;
         this.netWorth = netWorth;
         this.riskTolerance = riskTolerance;
+    }
+
+    @PrePersist
+    protected void onCreate() {
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
     }
 
     public String getId() {

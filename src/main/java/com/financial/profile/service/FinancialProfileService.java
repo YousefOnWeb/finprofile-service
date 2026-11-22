@@ -54,7 +54,6 @@ public class FinancialProfileService {
         }
 
         FinancialProfile entity = new FinancialProfile(
-                null,
                 request.fullName(),
                 request.email(),
                 request.monthlyIncome(),
@@ -121,12 +120,13 @@ public class FinancialProfileService {
      * @throws ResourceNotFoundException if no profile exists with the given ID
      */
     public void delete(String id) {
-        boolean removed = repository.deleteById(id);
-        if (!removed) {
+        boolean exists = repository.existsById(id);
+        if (!exists) {
             throw new ResourceNotFoundException(
                     "Profile with id '" + id + "' not found."
             );
         }
+        repository.deleteById(id);
     }
 
     /**

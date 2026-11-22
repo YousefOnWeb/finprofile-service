@@ -12,4 +12,14 @@
 - Implemented: FinancialProfileServiceTest (10 Mockito unit tests) and FinancialProfileControllerTest (7 @WebMvcTest slice tests).
 - Added spring-boot-starter-test (test scope) to pom.xml.
 - mvn test: 17 tests run, 0 failures, BUILD SUCCESS.
-- Next: consider adding @DataJpaTest repository tests or Testcontainers integration tests if external DB is introduced.
+
+## 2026-11-22 — Complete: Spring Data JPA repository with H2 (Spec 003)
+- Spec: docs/specs/003-spring-data-jpa-repository.md
+- Converted FinancialProfile to JPA entity (@Entity, @Id, @GeneratedValue, @PrePersist, @PreUpdate).
+- Converted FinancialProfileRepository to extend JpaRepository with derived existsByEmail query.
+- Removed InMemoryFinancialProfileRepository (replaced by Spring Data JPA).
+- Added application.yml with H2 embedded datasource and create-drop DDL.
+- Added FinancialProfileRepositoryTest (8 @DataJpaTest tests against embedded H2).
+- Updated service for new 5-arg entity constructor and JPA-generated IDs.
+- mvn verify: 25 tests run (7 controller + 8 repository + 10 service), 0 failures, BUILD SUCCESS.
+

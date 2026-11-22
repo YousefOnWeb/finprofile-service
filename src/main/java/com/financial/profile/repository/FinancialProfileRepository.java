@@ -1,57 +1,32 @@
 package com.financial.profile.repository;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.financial.profile.model.FinancialProfile;
 
 /**
- * Repository contract for financial profile persistence.
+ * Spring Data JPA repository for financial profile persistence.
  *
- * <p>Analogy: this is the "filing system interface." It declares what the
- * cabinet can do (save, find by ID, delete, check email existence) without
- * committing to how it's implemented internally.</p>
+ * <p>Analogy: this is the filing system interface, but now Spring Data JPA
+ * provides the implementation automatically. We only declare the contract
+ * — Spring generates the SQL and manages the database connection.</p>
+ *
+ * <p>By extending {@link JpaRepository}, we inherit standard CRUD methods:
+ * {@code save}, {@code findById}, {@code deleteById}, {@code findAll}, and
+ * more — without writing a single line of implementation code.</p>
  */
-public interface FinancialProfileRepository {
-
-    /**
-     * Save a profile. If a profile with the same ID already exists, it is
-     * replaced.
-     *
-     * @param profile the profile to save
-     * @return the saved profile
-     */
-    FinancialProfile save(FinancialProfile profile);
-
-    /**
-     * Find a profile by its ID.
-     *
-     * @param id the profile ID
-     * @return an {@link Optional} containing the profile if found, or empty
-     */
-    Optional<FinancialProfile> findById(String id);
+@Repository
+public interface FinancialProfileRepository extends JpaRepository<FinancialProfile, String> {
 
     /**
      * Check whether a profile with the given email already exists.
+     *
+     * <p>This is a derived query method: Spring Data JPA generates the
+     * underlying SQL from the method name.</p>
      *
      * @param email the email to check
      * @return {@code true} if a profile with this email exists
      */
     boolean existsByEmail(String email);
-
-    /**
-     * Delete a profile by its ID.
-     *
-     * @param id the profile ID
-     * @return {@code true} if a profile was deleted, {@code false} if none
-     *         existed with that ID
-     */
-    boolean deleteById(String id);
-
-    /**
-     * Retrieve all profiles.
-     *
-     * @return a list of all profiles
-     */
-    List<FinancialProfile> findAll();
 }
